@@ -1,5 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
+from django.contrib.auth import get_user_model
+from django.contrib.auth.forms import UserChangeForm
 
 from .models import User
 
@@ -12,6 +14,7 @@ class UserCreationForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ('member_id', )
+
     def clean_password2(self):
         password1 = self.cleaned_data.get("password1")
         password2 = self.cleaned_data.get("password2")
@@ -27,12 +30,43 @@ class UserCreationForm(forms.ModelForm):
         return user
 
 
-class UserChangeForm(forms.ModelForm):
-    password = ReadOnlyPasswordHashField()
-
+class CustomUserChangeForm(UserChangeForm):
     class Meta:
-        model = User
-        fields = ('member_id', 'is_admin', 'name', 'age', 'gender', 'registration_date', 'phone_number', 'athletic_experience', 'expiration_date', 'is_active', 'is_admin')
+        model = get_user_model()
+        fields = ('member_id', 'name', 'age', 'gender', 'registration_date', 'phone_number', 'athletic_experience', 'expiration_date',)
 
-    def clean_password(self):
-        return self.initial["password"]
+
+class CustomUserDeleteForm(UserChangeForm):
+    class Meta:
+        model = get_user_model()
+        fields = ('is_active',)
+
+
+class AdminLoginForm(forms.Form):
+    member_id = forms.CharField(
+        error_messages={
+            'required': 'Please enter Admin. member ID'
+        },
+        max_length=4, label='member_id'
+    )
+    password = forms.CharField(
+        error_messages={
+            'required': 'Please enter password'
+        },
+        label='password', widget=forms.PasswordInput
+    )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        member_id = cleaned_data.get('member_id')
+        password = cleaned_data.get('password')
+
+        if member_id and password:
+            try:
+                user = User.objects.get(member_id=member_id)
+                if not user.is_admin:
+                    self.add_error('member_id', 'You should enter Admin. member ID')
+                if password != user.password:
+                    self.add_error('password', 'You should enter correct password')
+            except Exception:
+                self.add_error('member_id', 'You\'ve entered invalid member ID')

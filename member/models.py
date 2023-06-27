@@ -57,6 +57,7 @@ class User(AbstractBaseUser):
     gender = models.CharField(
         max_length=6,
         default='Male',
+        choices=(('Male', 'Male'), ('Female', 'Female'))
     )
     registration_date = models.DateField(
         default='2000-01-01',

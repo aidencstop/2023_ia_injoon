@@ -66,7 +66,7 @@ def member_list(request):
             if len(selected)>1:
                 pass
             elif len(selected)==1:
-                pk=selected[0]
+                pk = selected[0]
                 user = User.objects.get(pk=pk)
 
                 return render(
@@ -271,9 +271,9 @@ def plot_recent_workouts(member_recent_workouts):
     result_list = [0, 0, 0, 0]
     category_name_list = ['The Strong Press-Up Routine', 'Deadlift & Pull-Up Blitz', 'Squat and Lunge Crush: Leg Day Madness', 'Sit-Up & Leg Raise Fusion: Abs of Steel']
     for member_recent_workout in member_recent_workouts:
-        workout_category = int(Workout.workout_category_sm_level_dict[member_recent_workout.workout][0])
-        weight_list = json.loads(member_recent_workout.weight_list)
-        reps_list = json.loads(member_recent_workout.reps_list)
+        workout_category = int(Workout.workout_category_sm_level_dict[member_recent_workout.workout][0]) #0, 1, 2, 3
+        weight_list = json.loads(member_recent_workout.weight_list) # [20, 20, 20, 20, 20]
+        reps_list = json.loads(member_recent_workout.reps_list) # [5, 5, 5, 5, 5]
         sumproduct = 0
         for i in range(len(weight_list)):
             sumproduct += weight_list[i]*reps_list[i]
@@ -295,11 +295,6 @@ def check_in(request):
     if request.method == 'POST':
         if 'checkin' in request.POST:
 
-
-
-
-
-
             auth.logout(request)
             return redirect('/member/member_login/')
     user = auth.get_user(request)
@@ -307,7 +302,7 @@ def check_in(request):
     workouts = Workout.objects.all().order_by('date')
     member_workouts = [a for a in workouts if a.member_id == member_id]
     member_recent_workouts = member_workouts[-10:]
-    plot = plot_recent_workouts(member_recent_workouts)
+    plot = plot_recent_workouts(member_recent_workouts) # plot save in static/image/figure.png
 
     main_recommended_workout_name, main_recommended_weight_list, main_recommended_reps_list,\
         sub_recommended_workout_name, sub_recommended_weight_list, sub_recommended_reps_list = \

@@ -14,6 +14,7 @@
 
 
     <!-- Bootstrap core CSS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     {% load bootstrap4 %}
     {% bootstrap_css %}
     {% bootstrap_javascript %}
@@ -66,7 +67,7 @@
             <div class="col-8"></div>
             <div class="col-2 text-center">
                 <div>Today</div>
-                <div>2023.06.11</div>
+                <div>{{ today }}</div>
             </div>
         </div>
     </div>
@@ -104,7 +105,17 @@
                         <tbody>
                             <tr>
                                 <td>
-                                    <input name="main_workout" type="text" class="form-control">
+                                    <select name="main_workout" type="text" class="form-select" aria-label="Default select example">
+                                      <option selected value="Default">Open this select menu</option>
+                                      <option value="Barbell Bench Press">Barbell Bench Press</option>
+                                      <option value="Dumbbell Bench Press">Dumbbell Bench Press</option>
+                                      <option value="Barbell Dead Lift">Barbell Dead Lift</option>
+                                      <option value="Dumbbell Dead Lift">Dumbbell Dead Lift</option>
+                                      <option value="Barbell Squat">Barbell Squat</option>
+                                      <option value="Leg Press">Leg Press</option>
+                                      <option value="Cable Crunch">Cable Crunch</option>
+                                      <option value="AB Crunch Machine">AB Crunch Machine</option>
+                                    </select>
                                 </td>
                                 <td><input name="main_weight" type="number" class="form-control" value=0
                                         aria-label="Integer input"></td>
@@ -130,6 +141,7 @@
                         </tbody>
                     </table>
                 </div>
+
                 <div class="row col-12">
                     SUB
                 </div>
@@ -153,7 +165,17 @@
                         <tbody>
                             <tr>
                                 <td>
-                                    <input name="sub_workout" type="text" class="form-control">
+                                    <select name="sub_workout" type="text" class="form-select" aria-label="Default select example">
+                                      <option selected value="Default">Open this select menu</option>
+                                      <option value="Bent-Over Triceps Extension">Bent-Over Triceps Extension</option>
+                                      <option value="Cable Triceps Extension">Cable Triceps Extension</option>
+                                      <option value="Barbell Row">Barbell Row</option>
+                                      <option value="Dumbbell Row">Dumbbell Row</option>
+                                      <option value="Barbell Lunge">Barbell Lunge</option>
+                                      <option value="Leg Extension">Leg Extension</option>
+                                      <option value="Dumbbell Side Bend">Dumbbell Side Bend</option>
+                                      <option value="Cable Side Bend">Cable Side Bend</option>
+                                    </select>
                                 </td>
                                 <td><input name="sub_weight" type="number" class="form-control" value=0
                                         aria-label="Integer input"></td>

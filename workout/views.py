@@ -3,6 +3,7 @@ from member.models import User
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
 import json
+import datetime
 
 # Create your views here.
 @csrf_exempt
@@ -11,17 +12,7 @@ def manage_workout(request, member_id):
         if 'to_member_list' in request.POST:
             return redirect('/member/member_list/')
         if 'initialize' in request.POST:
-            user = user = User.objects.get(member_id=member_id)
-            workouts = Workout.objects.all().order_by('date')
-            member_workouts = [a for a in workouts if a.member_id == member_id]
-            return render(
-                request,
-                'admin7.html',
-                {
-                    'user': user,
-                    'workouts': member_workouts
-                }
-            )
+            return redirect('/workout/manage_workout/'+member_id+'/')
         if 'save' in request.POST:
 
             workouts = Workout.objects.all().order_by('date')
@@ -69,34 +60,25 @@ def manage_workout(request, member_id):
                 except Exception:
                     continue
 
-            user = User.objects.get(member_id=member_id)
-            workouts = Workout.objects.all().order_by('date')
-            member_workouts = [a for a in workouts if a.member_id == member_id]
-            weight_lists = [json.loads(a.weight_list) for a in member_workouts]
-            reps_lists = [json.loads(a.reps_list) for a in member_workouts]
-            data_list = zip(member_workouts, weight_lists, reps_lists)
+            return redirect('/workout/manage_workout/'+member_id+'/')
 
-            return render(
-                request,
-                'admin7.html',
-                {
-                    'user': user,
-                    'data_list': data_list
-                }
-            )
-
-    user = User.objects.get(member_id=member_id)
+    member = User.objects.get(member_id=member_id)
     workouts = Workout.objects.all().order_by('date')
     member_workouts = [a for a in workouts if a.member_id == member_id]
     weight_lists = [json.loads(a.weight_list) for a in member_workouts]
     reps_lists = [json.loads(a.reps_list) for a in member_workouts]
-    data_list = zip(member_workouts, weight_lists, reps_lists)
-
+    cnt_lists = [i + 1 for i in range(len(member_workouts))]
+    data_list = zip(cnt_lists, member_workouts, weight_lists, reps_lists)
+    target_year = str(datetime.datetime.today().year)
+    target_month = str(datetime.datetime.today().month)
+    target_day = str(datetime.datetime.today().day)
+    today = target_year + '.' + target_month + '.' + target_day
     return render(
         request,
         'admin7.html',
         {
-            'user': user,
+            'today':today,
+            'user': member,
             'data_list': data_list
         }
     )

@@ -35,8 +35,15 @@ def add_a_new_member(request):
             )
             # auth.login(request, user)
             return redirect('/member/add_a_new_member/')
-
-    return render(request, 'admin3.html')
+    target_year = str(datetime.datetime.today().year)
+    target_month = str(datetime.datetime.today().month)
+    target_day = str(datetime.datetime.today().day)
+    today = target_year + '.' + target_month + '.' + target_day
+    return render(request, 'admin3.html',
+        {
+            'today':today
+        }
+    )
 
 
 @csrf_exempt
@@ -69,23 +76,24 @@ def member_list(request):
                 pk = selected[0]
                 user = User.objects.get(pk=pk)
 
-                return render(
-                    request,
-                    'admin4.html',
-                    {
-                        'user': user
-                    }
-                )
+                return redirect('/member/edit_member_info/'+pk+'/')
             else:
                 pass
 
     users = User.objects.all().order_by('pk')
     active_users = [user for user in users if user.is_active]
+    cnt_lists = [i + 1 for i in range(len(active_users))]
+    data_list = zip(cnt_lists, active_users)
+    target_year = str(datetime.datetime.today().year)
+    target_month = str(datetime.datetime.today().month)
+    target_day = str(datetime.datetime.today().day)
+    today = target_year + '.' + target_month + '.' + target_day
     return render(
         request,
         'admin2.html',
         {
-            'users': active_users
+            'today': today,
+            'data_list': data_list
         }
     )
 
@@ -97,24 +105,33 @@ def edit_member_info(request, pk):
             return redirect('/member/member_list/')
         if 'save' in request.POST:
             user = User.objects.get(pk=pk)
+            user.member_id=request.POST['member_id']
+            user.name=request.POST['name']
+            user.age=request.POST['age']
+            user.gender=request.POST['gender']
+            user.registration_date=request.POST['registration_date']
+            user.phone_number=request.POST['phone_number']
+            user.athletic_experience=request.POST['athletic_experience']
+            user.expiration_date=request.POST['expiration_date']
 
-            form = CustomUserChangeForm(request.POST, instance=user)
-            if form.is_valid():
-                form.save()
+            user.save()
+            # form = CustomUserChangeForm(request.POST, instance=user)
+            # if form.is_valid():
+            #     form.save()
 
-                return render(
-                    request,
-                    'admin4.html',
-                    {
-                        'user': user
-                    }
-                )
+            return redirect('/member/edit_member_info/'+str(pk)+'/')
+
 
     user = User.objects.get(pk=pk)
+    target_year = str(datetime.datetime.today().year)
+    target_month = str(datetime.datetime.today().month)
+    target_day = str(datetime.datetime.today().day)
+    today = target_year + '.' + target_month + '.' + target_day
     return render(
         request,
         'admin4.html',
         {
+            'today': today,
             'user': user
         }
     )
@@ -139,11 +156,18 @@ def restore_members(request):
 
     users = User.objects.all().order_by('pk')
     deleted_users = [user for user in users if not user.is_active]
+    cnt_lists = [i + 1 for i in range(len(deleted_users))]
+    data_list = zip(cnt_lists, deleted_users)
+    target_year = str(datetime.datetime.today().year)
+    target_month = str(datetime.datetime.today().month)
+    target_day = str(datetime.datetime.today().day)
+    today = target_year + '.' + target_month + '.' + target_day
     return render(
         request,
         'admin5.html',
         {
-            'users': deleted_users
+            'today':today,
+            'data_list': data_list
         }
     )
 
@@ -169,12 +193,17 @@ def admin_login(request):
                 # TODO:should deal with invalid user case
 
             return redirect('/member/admin_login/')
-
+        if 'to_main' in request.POST:
+            return redirect('/')
+    target_year = str(datetime.datetime.today().year)
+    target_month = str(datetime.datetime.today().month)
+    target_day = str(datetime.datetime.today().day)
+    today = target_year + '.' + target_month + '.' + target_day
     return render(
         request,
         'admin1.html',
         {
-
+            'today':today
         }
     )
 
@@ -193,12 +222,17 @@ def member_login(request):
 
             except Exception:
                 return redirect('/member/member_login/')
-
+        if 'to_main' in request.POST:
+            return redirect('/')
+    target_year = str(datetime.datetime.today().year)
+    target_month = str(datetime.datetime.today().month)
+    target_day = str(datetime.datetime.today().day)
+    today = target_year + '.' + target_month + '.' + target_day
     return render(
         request,
         'member1.html',
         {
-
+            'today':today
         }
     )
 
@@ -248,36 +282,33 @@ def check_in_or_out(request):
             except Exception:
                 # TODO: ban message(no check-in record today)
                 return redirect('/member/check_in_or_out/', {'user': user})
-
+    target_year = str(datetime.datetime.today().year)
+    target_month = str(datetime.datetime.today().month)
+    target_day = str(datetime.datetime.today().day)
+    today = target_year+'.'+target_month+'.'+target_day
     return render(
         request,
         'member2.html',
         {
+            'today':today
         }
     )
 
 
 def plot_recent_workouts(member_recent_workouts):
-    workout_category_dict = {
-        'Push-Up': 0,
-        'Bench Press': 0,
-        'Pull-Up': 1,
-        'Dead Lift': 1,
-        'Squat': 2,
-        'Lunge': 2,
-        'Sit-Up': 3,
-        'Leg Raise': 3
-    }
     result_list = [0, 0, 0, 0]
-    category_name_list = ['The Strong Press-Up Routine', 'Deadlift & Pull-Up Blitz', 'Squat and Lunge Crush: Leg Day Madness', 'Sit-Up & Leg Raise Fusion: Abs of Steel']
-    for member_recent_workout in member_recent_workouts:
-        workout_category = int(Workout.workout_category_sm_level_dict[member_recent_workout.workout][0]) #0, 1, 2, 3
-        weight_list = json.loads(member_recent_workout.weight_list) # [20, 20, 20, 20, 20]
-        reps_list = json.loads(member_recent_workout.reps_list) # [5, 5, 5, 5, 5]
-        sumproduct = 0
-        for i in range(len(weight_list)):
-            sumproduct += weight_list[i]*reps_list[i]
-        result_list[workout_category]+=sumproduct
+    category_name_list = ['Push', 'Pull', 'Leg', 'Core']
+    if len(member_recent_workouts)==0:
+        pass
+    else:
+        for member_recent_workout in member_recent_workouts:
+            workout_category = int(Workout.workout_category_sm_level_dict[member_recent_workout.workout][0]) #0, 1, 2, 3
+            weight_list = json.loads(member_recent_workout.weight_list) # [20, 20, 20, 20, 20]
+            reps_list = json.loads(member_recent_workout.reps_list) # [5, 5, 5, 5, 5]
+            sumproduct = 0
+            for i in range(len(weight_list)):
+                sumproduct += weight_list[i]*reps_list[i]
+            result_list[workout_category]+=sumproduct
 
     df = pd.DataFrame(index=category_name_list, columns=['Value'])
     df['Value']=result_list
@@ -302,16 +333,21 @@ def check_in(request):
     workouts = Workout.objects.all().order_by('date')
     member_workouts = [a for a in workouts if a.member_id == member_id]
     member_recent_workouts = member_workouts[-10:]
+    print(member_recent_workouts)
     plot = plot_recent_workouts(member_recent_workouts) # plot save in static/image/figure.png
 
     main_recommended_workout_name, main_recommended_weight_list, main_recommended_reps_list,\
         sub_recommended_workout_name, sub_recommended_weight_list, sub_recommended_reps_list = \
         Workout.get_recommendation(member_workouts)
-
+    target_year = str(datetime.datetime.today().year)
+    target_month = str(datetime.datetime.today().month)
+    target_day = str(datetime.datetime.today().day)
+    today = target_year + '.' + target_month + '.' + target_day
     return render(
         request,
         'member3.html',
         {
+            'today':today,
             'user': user,
 
             'main_workout_name': main_recommended_workout_name,
@@ -335,6 +371,7 @@ def check_out(request):
             target_day = str(datetime.datetime.today().day)
             date = '-'.join([target_year, target_month, target_day])
             #TODO: check if input is valid(length of weight and reps same / valid workout name)
+
             main_workout_name = request.POST['main_workout']
             main_workout_weight_list = request.POST.getlist('main_weight')
             main_workout_num_of_sets = len(main_workout_weight_list)
@@ -373,11 +410,14 @@ def check_out(request):
 
             auth.logout(request)
             return redirect('/member/member_login/')
-
+    target_year = str(datetime.datetime.today().year)
+    target_month = str(datetime.datetime.today().month)
+    target_day = str(datetime.datetime.today().day)
+    today = target_year + '.' + target_month + '.' + target_day
     return render(
         request,
         'member4.html',
         {
-
+            'today':today
         }
     )

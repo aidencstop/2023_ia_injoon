@@ -65,7 +65,7 @@
             <div class="col-8"></div>
             <div class="col-2 text-center">
                 <div>Today</div>
-                <div>2023.06.11</div>
+                <div>{{ today }}</div>
             </div>
         </div>
     </div>
@@ -93,10 +93,11 @@
                         </thead>
                         <div>
                             <tbody class="text-center">
-                                {% for u in users %}
+                                {% for cnt, u in data_list %}
+
                                 <tr>
                                     <td>
-                                        {{ u.pk }}
+                                        {{ cnt }}
                                     </td>
                                     <td>
                                         {{ u.name }}

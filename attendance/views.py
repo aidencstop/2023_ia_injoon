@@ -2,6 +2,7 @@ from .models import Attendance
 from member.models import User
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
+import datetime
 
 # Create your views here.
 @csrf_exempt
@@ -62,10 +63,16 @@ def manage_attendance(request, member_id):
     user = User.objects.get(member_id=member_id)
     attendances = Attendance.objects.all().order_by('date')
     member_attendances = [a for a in attendances if a.member_id == member_id]
+
+    target_year = str(datetime.datetime.today().year)
+    target_month = str(datetime.datetime.today().month)
+    target_day = str(datetime.datetime.today().day)
+    today = target_year + '.' + target_month + '.' + target_day
     return render(
         request,
         'admin6.html',
         {
+            'today':today,
             'user': user,
             'attendances': member_attendances
         }

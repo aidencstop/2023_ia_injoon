@@ -12,46 +12,48 @@ class Workout(models.Model):
     reps_list = models.CharField(max_length=200, default='')
 
     workout_category_sm_level_dict = {
-        'Push Up': '001', # Sub Hard
-        'Chest Press': '000',  # Sub Easy
-        'Bench Press': '011', # Main Hard
-        'Dumbbell Press': '010', # Main Easy
-
-        'Pull Up': '101', # Sub Hard
-        'Lat Pull Down': '100', # Sub Easy
-        'Dead Lift': '111', # Main Hard
-        'Barbell Row': '110', # Main Easy
-
-        'Body Squat': '201', # Sub Hard
-        'Lunge': '200', # Sub Easy
+        #Push
+        'Bent-Over Triceps Extension': '001', # Sub Hard
+        'Cable Triceps Extension': '000',  # Sub Easy
+        'Barbell Bench Press': '011', # Main Hard
+        'Dumbbell Bench Press': '010', # Main Easy
+        #Pull
+        'Barbell Row': '101', # Sub Hard
+        'Dumbbell Row': '100', # Sub Easy
+        'Barbell Dead Lift': '111', # Main Hard
+        'Dumbbell Dead Lift': '110', # Main Easy
+        #Leg
+        'Barbell Lunge': '201', # Sub Hard
+        'Leg Extension': '200', # Sub Easy
         'Barbell Squat': '211', # Main Hard
         'Leg Press': '210',  # Main Easy
-
-        'Leg Raise': '311',  # Main Hard
-        'Sit Up': '310', # Main Easy
-        'Hip Thrust': '301', # Sub Hard
-        'Crunch': '300', # Sub Easy
+        #Core
+        'Dumbbell Side Bend': '301', # Sub Hard
+        'Cable Side Bend': '300', # Sub Easy
+        'Cable Crunch': '311',  # Main Hard
+        'AB Crunch Machine': '310',  # Main Easy
     }
     category_sm_level_workout_dict = {
-        '001': 'Push Up',  # Sub Hard
-        '000': 'Chest Press',  # Sub Easy
-        '011': 'Bench Press',  # Main Hard
-        '010': 'Dumbbell Press',  # Main Easy
-
-        '101': 'Pull Up',  # Sub Hard
-        '100': 'Lat Pull Down',  # Sub Easy
-        '111': 'Dead Lift',  # Main Hard
-        '110': 'Barbell Row',  # Main Easy
-
-        '201': 'Body Squat',  # Sub Hard
-        '200': 'Lunge',  # Sub Easy
+        #Push
+        '001': 'Bent-Over Triceps Extension',  # Sub Hard
+        '000': 'Cable Triceps Extension',  # Sub Easy
+        '011': 'Barbell Bench Press',  # Main Hard
+        '010': 'Dumbbell Bench Press',  # Main Easy
+        #Pull
+        '101': 'Barbell Row',  # Sub Hard
+        '100': 'Dumbbell Row',  # Sub Easy
+        '111': 'Barbell Dead Lift',  # Main Hard
+        '110': 'Dumbbell Dead Lift',  # Main Easy
+        #Leg
+        '201': 'Barbell Lunge',  # Sub Hard
+        '200': 'Leg Extension',  # Sub Easy
         '211': 'Barbell Squat',  # Main Hard
         '210': 'Leg Press',  # Main Easy
-
-        '311': 'Leg Raise',  # Main Hard
-        '310': 'Sit Up',  # Main Easy
-        '301': 'Hip Thrust',  # Sub Hard
-        '300': 'Crunch',  # Sub Easy
+        #Core
+        '301': 'Dumbbell Side Bend',  # Sub Hard
+        '300': 'Cable Side Bend',  # Sub Easy
+        '311': 'Cable Crunch',  # Main Hard
+        '310': 'AB Crunch Machine',  # Main Easy
     }
 
     @staticmethod

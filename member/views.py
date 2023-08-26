@@ -105,22 +105,21 @@ def edit_member_info(request, pk):
             return redirect('/member/member_list/')
         if 'save' in request.POST:
             user = User.objects.get(pk=pk)
-            user.member_id=request.POST['member_id']
-            user.name=request.POST['name']
-            user.age=request.POST['age']
-            user.gender=request.POST['gender']
-            user.registration_date=request.POST['registration_date']
-            user.phone_number=request.POST['phone_number']
-            user.athletic_experience=request.POST['athletic_experience']
-            user.expiration_date=request.POST['expiration_date']
 
-            user.save()
-            # form = CustomUserChangeForm(request.POST, instance=user)
-            # if form.is_valid():
-            #     form.save()
+            # In this part, we do not directly change variables' value in objects.
+            # instead, we call functions which are implemented in the class.
+            # therefore, we can protect each variable from modified by user directly.
+            # So this can be an Encapsulation.
+            user.setMemberId(request.POST['member_id'])
+            user.setName(request.POST['name'])
+            user.setAge(request.POST['age'])
+            user.setGender(request.POST['gender'])
+            user.setRegistrationDate(request.POST['registration_date'])
+            user.setPhoneNumber(request.POST['phone_number'])
+            user.setAthleticExperience(request.POST['athletic_experience'])
+            user.setExpirationDate(request.POST['expiration_date'])
 
             return redirect('/member/edit_member_info/'+str(pk)+'/')
-
 
     user = User.objects.get(pk=pk)
     target_year = str(datetime.datetime.today().year)
@@ -175,14 +174,24 @@ def restore_members(request):
 @csrf_exempt
 def admin_login(request):
     if request.method == 'POST':
-        # if 'to_main' in request.POST:
-        #     return redirect('/')
         if 'login' in request.POST:
             member_id = request.POST['member_id']
             password = request.POST['password']
             try:
                 user = User.objects.get(member_id=member_id)
 
+                # The function check_password is built-in function provided by Django.
+                # It checks if two password are same
+                #  - raw text typed by user
+                #  - the real password which is saved in database in encrypted form.
+                # First it decrypts the real password in DB.
+                # And then compares it with the raw password typed by user.
+                # If there's no encryption process, the password would be stored in raw form in DB.
+                # Then it can be hacked and used inappropriately.
+                # But now it's encrypted. So nobody can get raw version of the password.
+                # This ensures safety of our client's account.
+                # Plus, check_password() function only returns the output of comparison.
+                # Therefore, we cannot get the decrypted version even with this function.
                 if check_password(password, user.password):
                     auth.login(request, user)
                     return redirect('/member/member_list/', {'user': user})
@@ -214,6 +223,9 @@ def member_login(request):
         #     return redirect('/')
         if 'login' in request.POST:
             member_id = request.POST['member_id']
+            # Here we try log-in with input member_id
+            # If the user entered existing member_id, log-in will be successful.
+            # Or exception handling process will take place.
             try:
                 user = User.objects.get(member_id=member_id)
                 auth.login(request, user)
@@ -312,6 +324,12 @@ def plot_recent_workouts(member_recent_workouts):
 
     df = pd.DataFrame(index=category_name_list, columns=['Value'])
     df['Value']=result_list
+
+    # Here we visualize the data to show users their recent workout result of each category.
+    # If we show the result by text(or number), users cannot get the information easily.
+    # They need to look through the numbers to compare which is bigger over others.
+    # But with the graph(or plot), they easily compare the result of each category with others'.
+    # It can provide much better understanding, also intuitive.
     figure = df.plot(kind='bar', legend=False).get_figure()
 
     from pathlib import Path

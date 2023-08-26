@@ -125,4 +125,4 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [ BASE_DIR, "static", os.path.join(BASE_DIR, 'static'),]
 
-AUTH_USER_MODEL = 'member.User'
+AUTH_USER_MODEL = 'member.User' # This code is for Django to know that user-made model class now should be used to create each user.

@@ -93,8 +93,14 @@
                         </thead>
                         <div>
                             <tbody class="text-center">
+<!--                            This part is where the iteration used.
+                                We want to list all available members on this page.
+                                Since we don't know how many members are there, we cannot make fixed rows.
+                                So we are using iteration here.
+                                We get data_list, which is a list of User objects.
+                                Then we traverse the list, and make a new row for each object.
+                                -->
                                 {% for cnt, u in data_list %}
-
                                 <tr>
                                     <td>
                                         {{ cnt }}

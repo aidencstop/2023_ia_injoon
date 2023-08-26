@@ -51,12 +51,15 @@ def manage_workout(request, member_id):
                 reps_list = json.dumps(reps_list)
 
                 try:
+                    # In this part, we do not directly change variables' value in objects.
+                    # instead, we call functions which are implemented in the class.
+                    # therefore, we can protect each variable from modified by user directly.
+                    # So this can be an Encapsulation.
                     member_workout = member_workouts[idx]
-                    member_workout.workout = workout
-                    member_workout.num_of_sets = num_of_sets
-                    member_workout.weight_list = weight_list
-                    member_workout.reps_list = reps_list
-                    member_workout.save()
+                    member_workout.setWorkout(workout)
+                    member_workout.setNumOfSets(num_of_sets)
+                    member_workout.setWeightList(weight_list)
+                    member_workout.setRepsList(reps_list)
                 except Exception:
                     continue
 

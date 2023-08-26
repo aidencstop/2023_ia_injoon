@@ -41,6 +41,15 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser):
+    # Used Inheritance in this part.
+    # Basic 'User' class provided by Django does not have the feature we want(such as name, age, gender, etc.).
+    # So we made new class named 'User' which inherited 'AbstractBaseUser' provided by Django.
+    # After set this class as 'AUTH_USER_MODEL' at settings.py, now Django makes each user using this class.
+
+    # We declared each variable as 'Field'
+    # each Field has type, such as Char, Integer, Date.
+    # If we try to input data which is not appropriate with the field, Django denies it.
+    # So this 'Field' system provides validation process.
     member_id = models.CharField(
         verbose_name='member_id',
         max_length=4,
@@ -89,6 +98,45 @@ class User(AbstractBaseUser):
 
     def has_module_perms(self, app_label):
         return True
+
+    # Following series of setVar() functions are made to set variables' value indirectly by user.
+    # This is a way to implement "Encapsulation"
+    # each function gets value which is to be new value for a variable in object.
+    # then the function changes the value accordingly.
+    # user cannot change the value of variables in objects by themselves.
+    # instead, these functions do.
+    def setMemberId(self, member_id):
+        self.member_id = member_id
+        self.save()
+
+    def setName(self, name):
+        self.name = name
+        self.save()
+
+    def setAge(self, age):
+        self.age = age
+        self.save()
+
+    def setGender(self, gender):
+        self.gender = gender
+        self.save()
+
+    def setRegistrationDate(self, registration_date):
+        self.registration_date = registration_date
+        self.save()
+
+    def setPhoneNumber(self, phone_number):
+        self.phone_number = phone_number
+        self.save()
+
+    def setAthleticExperience(self, athletic_Experience):
+        self.athletic_experience = athletic_Experience
+        self.save()
+
+    def setExpirationDate(self, expiration_date):
+        self.expiration_date = expiration_date
+        self.save()
+
 
     @property
     def is_staff(self):

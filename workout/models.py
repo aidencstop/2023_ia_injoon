@@ -4,6 +4,10 @@ import json
 
 # Create your models here.
 class Workout(models.Model):
+    # We declared each variable as 'Field'
+    # each Field has type, such as Char, Integer, Date.
+    # If we try to input data which is not appropriate with the field, Django denies it.
+    # So this 'Field' system provides validation process.
     member_id = models.CharField(max_length=4)
     date = models.DateField()
     workout = models.CharField(max_length=20)
@@ -11,6 +15,25 @@ class Workout(models.Model):
     weight_list = models.CharField(max_length=200, default='')
     reps_list = models.CharField(max_length=200, default='')
 
+    # Here we saved all workouts' name and codes for workouts.
+
+    # We categorized workouts by three criteria, 'related body part / Main or Sub / Hard or Easy'
+    # We also made a code for each workout using three criteria with three digits.
+    # For an example,  'Barbell Bench Press' is 'Pushing workout / Sub / Hard'.
+    # So its code is '011'.
+
+    # Then we used this code system as key to search each workout's name from dictionary.
+
+    # We also could make a list of all workout, too.
+    # Then we need to get index of each workout by guessing.
+    # For example, "Since pushing workout starts from index 0
+    # and the main workout of hard version is in 3rd place in each category,
+    # the index of 'Barbell Bench Press' would be 2!"
+    # This is really inefficient.
+    # So I decided to use code system.
+
+    # Also, this dictionary is using 'Hashing' to find a value from key.
+    # Hashing provides O(1) time efficiency, therefore we can get the result very fast.
     workout_category_sm_level_dict = {
         #Push
         'Bent-Over Triceps Extension': '001', # Sub Hard
@@ -140,8 +163,30 @@ class Workout(models.Model):
                                                         json.loads(sub_recommended_workout_record.weight_list),
                                                         json.loads(sub_recommended_workout_record.reps_list))
 
-        return main_recommended_workout_name, main_recommended_weight_list, main_recommended_reps_list,\
+        return main_recommended_workout_name, main_recommended_weight_list, main_recommended_reps_list, \
             sub_recommended_workout_name, sub_recommended_weight_list, sub_recommended_reps_list
+
+    # Following series of setVar() functions are made to set variables' value indirectly by user.
+    # This is a way to implement "Encapsulation"
+    # each function gets value which is to be new value for a variable in object.
+    # then the function changes the value accordingly.
+    # user cannot change the value of variables in objects by themselves.
+    # instead, these functions do.
+    def setWorkout(self, workout):
+        self.workout = workout
+        self.save()
+
+    def setNumOfSets(self, num_of_sets):
+        self.num_of_sets = num_of_sets
+        self.save()
+
+    def setWeightList(self, weight_list):
+        self.weight_list = weight_list
+        self.save()
+
+    def setRepsList(self, reps_list):
+        self.reps_list = reps_list
+        self.save()
 
     def __str__(self):
         return str(self.date) + ": " + str(self.member_id)

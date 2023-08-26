@@ -41,11 +41,15 @@ def manage_attendance(request, member_id):
                 check_out_time = check_out_time_list[idx]
                 workout_duration = workout_duration_list[idx]
                 try:
+                    # In this part, we do not directly change variables' value in objects.
+                    # instead, we call functions which are implemented in the class.
+                    # therefore, we can protect each variable from modified by user directly.
+                    # So this can be an Encapsulation.
                     attendance = member_attendance
-                    attendance.check_in_time = check_in_time
-                    attendance.check_out_time = check_out_time
-                    attendance.workout_duration = workout_duration
-                    attendance.save()
+                    attendance.setCheckInTime(check_in_time)
+                    attendance.setCheckOutTime(check_out_time)
+                    attendance.setWorkoutDuration(workout_duration)
+
                 except Exception:
                     continue
             user = User.objects.get(member_id=member_id)
